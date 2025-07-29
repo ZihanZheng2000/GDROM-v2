@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GDROM v2 Narrative Visualization</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <div id="container">
+    <h1>GDROM v2: How We Overcome Reservoir Data Scarcity</h1>
+    <div id="scene"></div>
+    <button id="nextButton">Next Scene</button>
+  </div>
+
+  <script>
+    let sceneIndex = 0;
+
+    const scenes = [
+      drawScene1,
+      drawScene2,
+      drawScene3,
+      drawScene4
+    ];
+
+    function clearScene() {
+      d3.select("#scene").html("");
+    }
+
+    function drawScene1() {
+      clearScene();
+      d3.select("#scene")
+        .append("h2")
+        .text("Scene 1: The U.S. Reservoir Data Gap");
+
+      d3.select("#scene")
+        .append("p")
+        .text("Distribution of Res-R, Res-L, Res-M reservoirs");
+
+      const width = 500, height = 400, radius = Math.min(width, height) / 2;
+
+      const svg = d3.select("#scene")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", `translate(${width / 2}, ${height / 2})`);
+
+      const data = [
+        { category: "Res-R", value: 748 },
+        { category: "Res-L", value: 174 },
+        { category: "Res-M", value: 1095 }
+      ];
+
+      const color = d3.scaleOrdinal()
+        .domain(data.map(d => d.category))
+        .range(["#1f77b4", "#ff7f0e", "#2ca02c"]);
+
+      const pie = d3.pie().value(d => d.value);
+      const arc = d3.arc().innerRadius(0).outerRadius(radius);
+
+      svg.selectAll("path")
+        .data(pie(data))
+        .join("path")
+        .attr("d", arc)
+        .attr("fill", d => color(d.data.category))
+        .attr("stroke", "white")
+        .style("stroke-width", "2px");
+
+      svg.selectAll("text")
+        .data(pie(data))
+        .join("text")
+        .text(d => `${d.data.category}: ${d.data.value}`)
+        .attr("transform", d => `translate(${arc.centroid(d)})`)
+        .style("text-anchor", "middle")
+        .style("font-size", "14px");
+    }
+
+    function drawScene2() {
+      clearScene();
+      d3.select("#scene")
+        .append("h2")
+        .text("Scene 2: Data Fusion and Transfer Learning");
+
+      d3.select("#scene")
+        .append("p")
+        .text("We combine USGS gages, satellite surface area, and bathymetry to reconstruct inflow, release, and storage.");
+
+      d3.select("#scene")
+        .append("svg")
+        .attr("width", 600)
+        .attr("height", 400)
+        .append("text")
+        .attr("x", 50)
+        .attr("y", 200)
+        .text("[Method Schematic Placeholder]");
+    }
+
+    function drawScene3() {
+      clearScene();
+      d3.select("#scene")
+        .append("h2")
+        .text("Scene 3: Accuracy and Validation");
+
+      d3.select("#scene")
+        .append("p")
+        .text("GDROM rules outperform benchmark models in release, inflow, and storage accuracy.");
+
+      d3.select("#scene")
+        .append("svg")
+        .attr("width", 600)
+        .attr("height", 400)
+        .append("text")
+        .attr("x", 50)
+        .attr("y", 200)
+        .text("[Validation Metric Chart Placeholder]");
+    }
+
+    function drawScene4() {
+      clearScene();
+      d3.select("#scene")
+        .append("h2")
+        .text("Scene 4: Explore Any Reservoir");
+
+      d3.select("#scene")
+        .append("p")
+        .text("Click on a reservoir on the map to view its reconstructed data and operation rules.");
+
+      d3.select("#scene")
+        .append("svg")
+        .attr("width", 600)
+        .attr("height", 400)
+        .append("text")
+        .attr("x", 50)
+        .attr("y", 200)
+        .text("[Interactive Map Placeholder]");
+    }
+
+    d3.select("#nextButton").on("click", function () {
+      sceneIndex = (sceneIndex + 1) % scenes.length;
+      scenes[sceneIndex]();
+    });
+
+    // Initialize first scene
+    scenes[0]();
+  </script>
+</body>
+</html>
